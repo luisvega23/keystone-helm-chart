@@ -75,13 +75,15 @@ livenessProbe: {}
   # httpGet:
   #   path: /
   #   port: http
-readinessProbe: {}
-  # httpGet:
-  #   path: /
-  #   port: http
+readinessProbe:
+  httpGet:
+    path: /v3
+    port: 5000
+  initialDelaySeconds: 60
+  periodSeconds: 5
 
-autoscaling: {}
-  # enabled: false
+autoscaling:
+  enabled: false
   # minReplicas: 1
   # maxReplicas: 100
   # targetCPUUtilizationPercentage: 80

@@ -36,18 +36,17 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+          - /bin/bash
+          - -c
+          - echo "Listen 8080" > /etc/apache2/ports.conf && apachectl -D FOREGROUND
           ports:
             - containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          # livenessProbe:
-          #   {{- toYaml .Values.livenessProbe | nindent 12 }}
-          # readinessProbe:
-          #   {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
-          # volumeMounts:
-          #   {{- toYaml . | nindent 12 }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
       {{- with .Values.volumes }}
       volumes:
