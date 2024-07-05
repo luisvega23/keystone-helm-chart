@@ -60,15 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-
-{{/*
-Return the mysql URI based
-*/}}
-{{- define "keystone.databaseUri" -}}
-  {{- if .Values.mysql.enabled }}
-    {{- $secret := (lookup "v1" "Secret" .Release.Namespace .Values.mysql.fullnameOverride ) }}
-    {{- $password := (index $secret.data "mysql-root-password" ) | b64dec }}
-    {{ printf "mysql+pymysql://keystone:%s@%s:3306/keystone" $password .Values.mysql.fullnameOverride }}
-  {{- end }}
-{{- end }}

@@ -34,8 +34,7 @@ spec:
         - name: wait-mysql
           image: "busybox:latest"
           imagePullPolicy: IfNotPresent
-          # TODO: Change "mysql" for a parameter name
-          command: ['sh', '-c', "until nslookup mysql | grep "Address"; do echo waiting for Mysql to be ready; sleep 2; done"]
+          command: ['sh', '-c', "until nslookup mysql | grep 'Address'; do echo waiting for Mysql to be ready; sleep 2; done"]
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -45,7 +44,7 @@ spec:
           command:
           - /bin/bash
           - -c
-          - echo "Listen 8080" > /etc/apache2/ports.conf && apachectl -D FOREGROUND
+          - /etc/keystone/write_conf.sh && apachectl -D FOREGROUND
           ports:
             - containerPort: {{ .Values.service.port }}
           env:
@@ -54,6 +53,11 @@ spec:
                 secretKeyRef:
                   name: mysql
                   key: mysql-root-password
+            - name: KEYSTONE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keystone-secret
+                  key: mysql-keystone-password
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

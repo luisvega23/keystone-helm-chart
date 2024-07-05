@@ -5,9 +5,13 @@ metadata:
   labels:
     app: keystone
 data:
-  keystone.conf: |-
+  write_conf.sh: |-
+    #!/bin/bash
+    echo "Listen 8080" > /etc/apache2/ports.conf
+    cat << EOF >> /etc/keystone/keystone.conf
     [database]
-    connection = {{ include "keystone.databaseUri" .}}
+    connection = mysql+pymysql://keystone:${KEYSTONE_DB_PASSWORD}@mysql:3306/keystone
 
     [token]
     provider = fernet
+    EOF
